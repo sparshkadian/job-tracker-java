@@ -1,3 +1,5 @@
+package job.tracking;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -8,10 +10,6 @@ import java.util.Set;
 @Entity
 @Table(name = "applications")
 public class Application implements Comparable<Application> {
-
-    public enum JobType {
-        INTERNSHIP, FULL_TIME, PART_TIME, CONTRACT
-    }
 
     @Id
     @Column(name = "id")
@@ -132,7 +130,7 @@ public class Application implements Comparable<Application> {
                 ", offeredSalary=" + offeredSalary +
                 ", notes='" + notes + '\'' +
                 ", applyDate=" + applyDate +
-                '}' + '\n';
+                '}';
     }
 
     @Override

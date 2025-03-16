@@ -1,3 +1,5 @@
+package job.tracking;
+
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -6,10 +8,6 @@ import java.time.LocalDate;
 @Table(name = "application_statuses")
 public class ApplicationStatus implements Comparable<ApplicationStatus> {
 
-    public enum Status {
-        APPLIED, IN_PROGRESS, OFFER_RECEIVED, REJECTED
-    }
-
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,7 +15,7 @@ public class ApplicationStatus implements Comparable<ApplicationStatus> {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private Status status;
+    private JobStatus jobStatus;
 
     @Column(name = "status_date", nullable = false)
     private LocalDate date;
@@ -28,18 +26,18 @@ public class ApplicationStatus implements Comparable<ApplicationStatus> {
 
     public ApplicationStatus() {}
 
-    public ApplicationStatus(Status status, LocalDate date, Application application) {
-        this.status = status;
+    public ApplicationStatus(JobStatus jobStatus, LocalDate date, Application application) {
+        this.jobStatus = jobStatus;
         this.date = date;
         this.application = application;
     }
 
     public ApplicationStatus(LocalDate date, Application application) {
-        this(Status.APPLIED, date, application);
+        this(JobStatus.APPLIED, date, application);
     }
 
-    public Status getStatus() {
-        return status;
+    public JobStatus getStatus() {
+        return jobStatus;
     }
 
     public LocalDate getDate() {
@@ -67,8 +65,8 @@ public class ApplicationStatus implements Comparable<ApplicationStatus> {
     @Override
     public String toString() {
         return "ApplicationStatus{" +
-                ", id=" + id +
-                ", status=" + status +
+                "id=" + id +
+                ", jobStatus=" + jobStatus +
                 ", date=" + date +
                 '}';
     }
