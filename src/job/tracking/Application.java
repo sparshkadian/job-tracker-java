@@ -130,7 +130,7 @@ public class Application implements Comparable<Application> {
                 ", offeredSalary=" + offeredSalary +
                 ", notes='" + notes + '\'' +
                 ", applyDate=" + applyDate +
-                '}' + '\n';
+                '}';
     }
 
     @Override

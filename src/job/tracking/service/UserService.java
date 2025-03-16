@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Tuple;
 import job.tracking.User;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class UserService {
             System.out.printf("user with email %s already exists.%n", email);
             return;
         }
-        executeTransaction(() -> em.persist(new User(name, email, password)));
+        executeTransaction(() -> em.persist(new User(name, email, BCrypt.hashpw(password, BCrypt.gensalt()))));
         System.out.printf("%s is now a registered user.%n", name);
     }
 

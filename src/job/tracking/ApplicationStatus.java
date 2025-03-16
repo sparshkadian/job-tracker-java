@@ -65,7 +65,7 @@ public class ApplicationStatus implements Comparable<ApplicationStatus> {
     @Override
     public String toString() {
         return "ApplicationStatus{" +
-                ", id=" + id +
+                "id=" + id +
                 ", jobStatus=" + jobStatus +
                 ", date=" + date +
                 '}';

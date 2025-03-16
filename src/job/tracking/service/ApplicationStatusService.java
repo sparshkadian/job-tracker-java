@@ -17,14 +17,14 @@ public class ApplicationStatusService {
 
     public void updateApplicationStatus(int applicationId, String status) {
         applicationService.findApplication(applicationId).ifPresentOrElse(application -> {
-            ApplicationStatus applicationStatus = new ApplicationStatus(UtilService.parseApplicationStatus(status), LocalDate.now(), application);
+            ApplicationStatus applicationStatus = new ApplicationStatus(UtilService.parseApplicationStatus(status), LocalDate.now().plusMonths(1), application);
             executeTransaction(() -> em.persist(applicationStatus));
-        }, () -> System.out.printf("Application with ID: %d does not exist.", applicationId));
+        }, () -> System.out.printf("Application with ID: %d does not exist.%n", applicationId));
     }
 
     public void getApplicationStatusHistory(int applicationId) {
         applicationService.findApplication(applicationId).ifPresentOrElse(application -> application.getApplicationStatusList().stream().sorted().forEach(System.out::println),
-                () -> System.out.printf("Application with ID: %d does not exist.", applicationId));
+                () -> System.out.printf("Application with ID: %d does not exist.%n", applicationId));
     }
 
     public void executeTransaction(Runnable action) {
