@@ -1,3 +1,5 @@
+package job.tracking;
+
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -58,12 +60,20 @@ public class User {
         return applications;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
     public void setAvatarUrl(String avatarUrl) {
         this.avatarUrl = avatarUrl;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

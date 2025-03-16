@@ -1,10 +1,16 @@
+package job.tracking.service;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.Tuple;
+import job.tracking.User;
 
 import java.util.Optional;
 
 public class UserService {
+
+    private final String FIND_USER_BY_EMAIL = "SELECT u FROM User u WHERE email = :email";
+    private final String GET_ALL_USERS  = "SELECT u.id as id, u.name as name, u.email as email FROM User u";
 
     private final EntityManager em;
 
@@ -22,31 +28,47 @@ public class UserService {
         System.out.printf("%s is now a registered user.%n", name);
     }
 
-    public void changeName(String name, int userId) {
+    public UserService changeName(String name, int userId) {
         findUser(userId).ifPresentOrElse(user -> executeTransaction(() -> {
             user.setName(name);
             System.out.printf("Name updated for user ID: %d%n", userId);
-        }), () -> System.out.printf("User with ID: %d does not exist", userId));
+        }), () -> System.out.printf("User with ID: %d does not exist.%n", userId));
+        return this;
     }
 
-    public void changeAvatar(String avatarUrl, int userId) {
+    public UserService changeAvatar(String avatarUrl, int userId) {
         findUser(userId).ifPresentOrElse(user -> executeTransaction(() -> {
             user.setAvatarUrl(avatarUrl);
             System.out.printf("Avatar updated for user ID: %d%n", userId);
-        }), () -> System.out.printf("User with ID: %d does not exist", userId));
+        }), () -> System.out.printf("User with ID: %d does not exist.%n", userId));
+        return this;
+    }
+
+    public void changePassword(String oldPassword, String newPassword, int userId) {
+        findUser(userId).ifPresentOrElse(user -> {
+            String currentPassword = user.getPassword();
+            if(oldPassword.equals(currentPassword) && ! oldPassword.equals(newPassword)) {
+                executeTransaction(() -> user.setPassword(newPassword));
+            } else if (newPassword.equals(oldPassword)) {
+                System.out.println("New Password is same as Old Password.");
+            } else {
+                System.out.println("Old Password is Wrong. Try again.");
+            }
+                },
+                () -> System.out.printf("User with ID: %d does not exist.%n", userId));
+
     }
 
     public void deleteAccount(int userId) {
         findUser(userId).ifPresentOrElse(user -> executeTransaction(() -> {
             em.remove(user);
             System.out.printf("User with ID: %d has been Deleted.%n", userId);
-        }), () -> System.out.printf("User with ID: %d does not exist", userId));
+        }), () -> System.out.printf("User with ID: %d does not exist.%n", userId));
     }
 
     public Optional<User> findUser(String email) {
-        String query = "SELECT u FROM User u WHERE email = :email";
         try {
-            return Optional.of(em.createQuery(query, User.class)
+            return Optional.of(em.createQuery(FIND_USER_BY_EMAIL, User.class)
                     .setParameter("email", email)
                     .getSingleResult());
         } catch (NoResultException e) {
@@ -60,11 +82,9 @@ public class UserService {
     }
 
     public void printUsers() {
-        String query = "SELECT u.id as id, u.name as name, u.email as email FROM User u";
-        var users = em.createQuery(query, Tuple.class).getResultList();
-
-        System.out.printf("%-10s%-20s%s%n", "id", "name", "email");
-        users.forEach(user -> System.out.printf("%-10s%-20s%s%n", user.get("id"),
+        var users = em.createQuery(GET_ALL_USERS, Tuple.class).getResultList();
+        System.out.printf("  %-10s%-20s%s%n", "id", "name", "email");
+        users.forEach(user -> System.out.printf("  %-10s%-20s%s%n", user.get("id"),
                 user.get("name"), user.get("email")));
     }
 
